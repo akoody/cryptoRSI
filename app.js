@@ -80,13 +80,12 @@ async function fetchCoinsWithRSI() {
               values: closePrices1m,
               period: 14,
             };
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 2500));
 
             const rsi1m = RSI.calculate(input1m);
 
             if (rsi1m[rsi1m.length - 1] > 50 || rsi1m[rsi1m.length - 1] < 45) {
               const message = `Монета: ${symbol}, Last RSI (5m): ${rsi5m[rsi5m.length - 1]}, Last RSI (1m): ${rsi1m[rsi1m.length - 1]}`;
-              console.log(message);
 
               if (!isRunning) {
                 break;
