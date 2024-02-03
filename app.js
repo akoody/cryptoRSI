@@ -8,6 +8,7 @@ const botToken = '6720832605:AAGqeIeg9inFg29yEU0Wx0lEO2WyLpy1epQ';
 
 const bot = new Telegraf(botToken);
 const sessions = {};
+let isRunning = false;
 
 bot.start((ctx) => {
   const userId = ctx.from.id;
