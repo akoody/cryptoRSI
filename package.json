@@ -1,0 +1,21 @@
+{
+  "name": "cryptocheck",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "C:/Users/qweas/Desktop/crypto/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "ccxt": "^4.2.23",
+    "fs": "^0.0.1-security",
+    "p-limit": "^2.3.0",
+    "path": "^0.12.7",
+    "plotly": "^1.0.6",
+    "technicalindicators": "^3.1.0",
+    "telegraf": "^4.15.3"
+  }
+}
