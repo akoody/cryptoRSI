@@ -109,7 +109,7 @@ async function fetchCoinsWithRSI(userId) {
           };
           const rsi5m = RSI.calculate(input5m);
 
-          if (rsi5m[rsi5m.length - 1] > 69 || rsi5m[rsi5m.length - 1] < 30) {
+          if (rsi5m[rsi5m.length - 1] > 65 || rsi5m[rsi5m.length - 1] < 30) {
             const input1m = {
               values: closePrices1m,
               period: 14,
@@ -118,7 +118,7 @@ async function fetchCoinsWithRSI(userId) {
 
             const rsi1m = RSI.calculate(input1m);
 
-            if (rsi1m[rsi1m.length - 1] > 69 || rsi1m[rsi1m.length - 1] < 30) {
+            if (rsi1m[rsi1m.length - 1] > 65 || rsi1m[rsi1m.length - 1] < 30) {
               const message = `Монета: ${symbol}, Last RSI (5m): ${rsi5m[rsi5m.length - 1]}, Last RSI (1m): ${rsi1m[rsi1m.length - 1]}`;
               // console.log(message);
 
