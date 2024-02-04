@@ -13,7 +13,7 @@ let isRunning = false;
 bot.start((ctx) => {
   const userId = ctx.from.id;
   sessions[userId] = { isRunning: false };
-  ctx.reply('Bot is started\n/run - Start searching for coins\n/stop - Stop searching for coins\n/donate - For donate <3\n/help - For more info');
+  ctx.reply('Bot is started\n/run - Start searching for coins\n/stop - Stop searching for coins\n/donate - For donate <3\n/help - For more info\n@akoooodyyyy - Founder');
 });
 
 bot.help((ctx) => {
@@ -82,7 +82,7 @@ async function fetchCoinsWithRSI(userId) {
       const exchange = new ccxt.binance();
       const markets = await exchange.loadMarkets();
       const symbols = Object.keys(markets);
-      const excludedPairs = ['CITY/USDT', 'ETHUP/USDT', 'REI/USDT', 'UTK/USDT', 'WRX/USDT', 'JUV/USDT', 'GHST/USDT', 'VIB/USDT', 'DF/USDT', 'BURGER/USDT', 'VIDT/USDT', 'DCR/USDT', 'LTO/USDT', 'FOR/USDT', 'VIC/USDT', 'ORN/USDT', 'FLOKI/USDT', 'PHA/USDT', 'DEGO/USDT', 'ACA/USDT', 'AMP/USDT', 'WBTC/USDT', 'ACM/USDT', 'OAX/USDT', '1000SATS/USDT', 'MLN/USDT', 'WIN/USDT', 'DIA/USDT', 'GNS/USDT', 'PROS/USDT', 'LOKA/USDT', 'CTXC/USDT', 'AEUR/USDT', 'BTCDOWN/USDT', 'USDC/USDT', 'HARD/USDT', 'QUICK/USDT', 'ETHDOWN/USDT', 'DEXE/USDT', 'NEXO/USDT', 'BAR/USDT', 'QKC/USDT', 'ERN/USDT', 'POLS/USDT', 'MOB/USDT', 'TROY/USDT', 'TKO/USDT', 'WNXM/USDT', 'WBETH/USDT', 'PIVX/USDT', 'ADX/USDT', 'EUR/USDT', 'EPX/USDT', 'USDP/USDT', 'FIS/USDT', 'FARM/USDT', 'UFT/USDT', 'FIDA/USDT', 'BSV/USDT', 'USDSB/USDT', 'TOMO/USDT', 'LEND/USDT', 'VITE/USDT', 'POND/USDT', 'VEN/USDT', 'BSV/USDT', 'USDS/USDT', 'USDSB/USDT', 'TOMO/USDT', 'PERL/USDT', 'AION/USDT', 'WTC/USDT', 'LEND/USDT', 'BNBUP/USDT', 'AUD/USDT', 'XRPUP/USDT', 'EPS/USDT', 'AUTO/USDT', 'NU/USDT', 'UST/USDT', 'NEBL/USDT', 'PNT/USDT', 'PSG/USDT', 'SYN/USDT', 'BTT/USDT', 'COCOS/USDT', 'STORM/USDT', 'HC/USDT', 'BULL/USDT', 'BKRW/USDT', 'FIO/USDT', 'OM/USDT', 'GNO/USDT', 'SANTOS/USDT', 'BIFI/USDT', 'VANRY/USDT', 'TFUEL/USDT', 'ELF/USDT', 'COS/USDT', 'VTHO/USDT', 'ASR/USDT', 'BNBDOWN/USDT'];
+      const excludedPairs = ['WRX/USDT', 'CITY/USDT', 'ETHUP/USDT', 'REI/USDT', 'UTK/USDT', 'WRX/USDT', 'JUV/USDT', 'GHST/USDT', 'VIB/USDT', 'DF/USDT', 'BURGER/USDT', 'VIDT/USDT', 'DCR/USDT', 'LTO/USDT', 'FOR/USDT', 'VIC/USDT', 'ORN/USDT', 'FLOKI/USDT', 'PHA/USDT', 'DEGO/USDT', 'ACA/USDT', 'AMP/USDT', 'WBTC/USDT', 'ACM/USDT', 'OAX/USDT', '1000SATS/USDT', 'MLN/USDT', 'WIN/USDT', 'DIA/USDT', 'GNS/USDT', 'PROS/USDT', 'LOKA/USDT', 'CTXC/USDT', 'AEUR/USDT', 'BTCDOWN/USDT', 'USDC/USDT', 'HARD/USDT', 'QUICK/USDT', 'ETHDOWN/USDT', 'DEXE/USDT', 'NEXO/USDT', 'BAR/USDT', 'QKC/USDT', 'ERN/USDT', 'POLS/USDT', 'MOB/USDT', 'TROY/USDT', 'TKO/USDT', 'WNXM/USDT', 'WBETH/USDT', 'PIVX/USDT', 'ADX/USDT', 'EUR/USDT', 'EPX/USDT', 'USDP/USDT', 'FIS/USDT', 'FARM/USDT', 'UFT/USDT', 'FIDA/USDT', 'BSV/USDT', 'USDSB/USDT', 'TOMO/USDT', 'LEND/USDT', 'VITE/USDT', 'POND/USDT', 'VEN/USDT', 'BSV/USDT', 'USDS/USDT', 'USDSB/USDT', 'TOMO/USDT', 'PERL/USDT', 'AION/USDT', 'WTC/USDT', 'LEND/USDT', 'BNBUP/USDT', 'AUD/USDT', 'XRPUP/USDT', 'EPS/USDT', 'AUTO/USDT', 'NU/USDT', 'UST/USDT', 'NEBL/USDT', 'PNT/USDT', 'PSG/USDT', 'SYN/USDT', 'BTT/USDT', 'COCOS/USDT', 'STORM/USDT', 'HC/USDT', 'BULL/USDT', 'BKRW/USDT', 'FIO/USDT', 'OM/USDT', 'GNO/USDT', 'SANTOS/USDT', 'BIFI/USDT', 'VANRY/USDT', 'TFUEL/USDT', 'ELF/USDT', 'COS/USDT', 'VTHO/USDT', 'ASR/USDT', 'BNBDOWN/USDT'];
 
       for (const symbol of symbols) {
         if (!session.isRunning) {
