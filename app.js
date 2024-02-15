@@ -28,13 +28,15 @@ bot.start((ctx) => {
     ['/scanBTC', '/stopScanBTC'],
     ['/donate', '/help'],
   ]).resize();
-  
+
   ctx.reply('Bot is started\n/runScan - Start searching for coins\n/stopScan - Stop searching for coins\n/scanBTC - Start scanning the BTC\n/stopScanBTC - Stop scanning the BTC\n/donate - For donate <3\n/help - For more info\n@akoooodyyyy - Founder', keyboard);
 });
 
 bot.help((ctx) => {
   const keyboard = Markup.keyboard([
-    ['/runScan', '/stopScan', '/scanBTC', '/stopScanBTC', '/donate', '/help'],
+    ['/runScan', '/stopScan'],
+    ['/scanBTC', '/stopScanBTC'],
+    ['/donate', '/help'],
   ]).resize();
 
   ctx.reply('Here are the available commands:\n/runScan - Start searching for coins\n/stopScan - Stop searching for coins\n/scanBTC - Start scanning the BTC\n/stopScanBTC - Stop scanning the BTC\n/donate - For donate :)\n/help - For more info', keyboard);
