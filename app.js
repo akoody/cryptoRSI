@@ -10,21 +10,37 @@ const bot = new Telegraf(botToken);
 const sessions = {};
 let isRunning = false;
 
+bot.use((ctx, next) => {
+  const keyboard = Markup.keyboard([
+    ['/runScan', '/stopScan'],
+    ['/scanBTC', '/stopScanBTC'],
+    ['/donate', '/help'],
+  ]).resize();
+
+  return next();
+});
+
 bot.start((ctx) => {
   const userId = ctx.from.id;
   sessions[userId] = { isRunning: false };
-  ctx.reply('Bot is started\n/run - Start searching for coins\n/stop - Stop searching for coins\n/donate - For donate <3\n/help - For more info\n@akoooodyyyy - Founder');
+  const keyboard = Markup.keyboard([
+    ['/runScan', '/stopScan'],
+    ['/scanBTC', '/stopScanBTC'],
+    ['/donate', '/help'],
+  ]).resize();
+  
+  ctx.reply('Bot is started\n/runScan - Start searching for coins\n/stopScan - Stop searching for coins\n/scanBTC - Start scanning the BTC\n/stopScanBTC - Stop scanning the BTC\n/donate - For donate <3\n/help - For more info\n@akoooodyyyy - Founder', keyboard);
 });
 
 bot.help((ctx) => {
   const keyboard = Markup.keyboard([
-    ['/run', '/stop', '/donate', '/help'],
+    ['/runScan', '/stopScan', '/scanBTC', '/stopScanBTC', '/donate', '/help'],
   ]).resize();
 
-  ctx.reply('Here are the available commands:\n/run - Start searching for coins\n/stop - Stop searching for coins\n/donate - For donate :)\n/help - For more info', keyboard);
+  ctx.reply('Here are the available commands:\n/runScan - Start searching for coins\n/stopScan - Stop searching for coins\n/scanBTC - Start scanning the BTC\n/stopScanBTC - Stop scanning the BTC\n/donate - For donate :)\n/help - For more info', keyboard);
 });
 
-bot.command('run', (ctx) => {
+bot.command('runScan', (ctx) => {
   const userId = ctx.from.id;
 
   if (!sessions[userId]) {
@@ -34,15 +50,19 @@ bot.command('run', (ctx) => {
   const session = sessions[userId];
 
   if (!session.isRunning) {
-    ctx.reply('Searching coins is started.');
+    ctx.reply('Searching coins is started.').catch((error) => {
+      console.error('Error sending message:', error.message);
+    });
     sessions[userId].isRunning = true;
     fetchCoinsWithRSI(userId);
   } else {
-    ctx.reply('Searching coins is already running.');
+    ctx.reply('Searching coins is already running.').catch((error) => {
+      console.error('Error sending message:', error.message);
+    });
   }
 });
 
-bot.command('stop', (ctx) => {
+bot.command('stopScan', (ctx) => {
   const userId = ctx.from.id;
   const session = sessions[userId];
 
@@ -56,6 +76,35 @@ bot.command('stop', (ctx) => {
 
 bot.command('donate', (ctx) => {
   ctx.reply('To improve the bot\nHere is my wallet TON\nUQDc7zu_P-5_uarOGCsMJoOQeIekQPJgkEH5KV91c5AunY-j');
+});
+
+bot.command('scanBTC', (ctx) => {
+  const userId = ctx.from.id;
+  if (!sessions[userId]) {
+    sessions[userId] = { isRunning: false };
+  }
+
+  const session = sessions[userId];
+
+  if (!session.isRunning) {
+    ctx.reply('Scanning BTC is started.');
+    sessions[userId].isRunning = true;
+    fetchBTCWithRSI(userId);
+  } else {
+    ctx.reply('Scanning BTC is already running.');
+  }
+});
+
+bot.command('stopScanBTC', (ctx) => {
+  const userId = ctx.from.id;
+  const session = sessions[userId];
+
+  if (session && session.isRunning) {
+    session.isRunning = false;
+    ctx.reply('Scanning BTC is stopped.');
+  } else {
+    ctx.reply('Scanning BTC is not running.');
+  }
 });
 
 async function sendTelegramMessage(userId, message) {
@@ -74,6 +123,37 @@ async function sendTelegramMessage(userId, message) {
   }
 }
 
+async function fetchBTCWithRSI(userId) {
+  try {
+    const exchange = new ccxt.binance();
+    const btcSymbol = 'BTC/USDT';
+    const session = sessions[userId];
+
+    while (session.isRunning) {
+      const ohlcv3m = await exchange.fetchOHLCV(btcSymbol, '3m');
+      const closePrices3m = ohlcv3m.map(candle => parseFloat(candle[4]));
+      const sma3m = SMA.calculate({ values: closePrices3m, period: 14 });
+      const input3m = {
+        values: closePrices3m,
+        period: 14,
+        avgU: sma3m,
+        avgD: sma3m,
+      };
+      const rsi3m = RSI.calculate(input3m);
+
+      if (rsi3m[rsi3m.length - 1] > 67 || rsi3m[rsi3m.length - 1] < 33) {
+        const ticker = await exchange.fetchTicker(btcSymbol);
+        const price = ticker.last;
+        const message = `BTC RSI (3m): ${rsi3m[rsi3m.length - 1]}, Price: ${price}`;
+        await sendTelegramMessage(userId, message);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 1 * 60 * 1000));
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
 async function fetchCoinsWithRSI(userId) {
   try {
