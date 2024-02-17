@@ -1,14 +1,17 @@
-const ccxt = require('ccxt');
-const { RSI, SMA } = require('technicalindicators');
-const axios = require('axios');
-const { Telegraf } = require('telegraf');
-const { Markup } = require('telegraf');
+import ccxt  from 'ccxt';
+import { RSI, SMA } from 'technicalindicators';
+import axios from 'axios';
+import { Telegraf, Markup } from 'telegraf';
+import dotenv from 'dotenv';
 
-const botToken = '6720832605:AAGqeIeg9inFg29yEU0Wx0lEO2WyLpy1epQ';
+dotenv.config();
+
+const botToken = process.env.BOT_KEY;
 
 const bot = new Telegraf(botToken);
 const sessions = {};
 let isRunning = false;
+let isRunningBTC = false;
 
 bot.use((ctx, next) => {
   const keyboard = Markup.keyboard([
@@ -83,14 +86,14 @@ bot.command('donate', (ctx) => {
 bot.command('scanBTC', (ctx) => {
   const userId = ctx.from.id;
   if (!sessions[userId]) {
-    sessions[userId] = { isRunning: false };
+    sessions[userId] = { isRunningBTC: false };
   }
 
   const session = sessions[userId];
 
-  if (!session.isRunning) {
+  if (!session.isRunningBTC) {
     ctx.reply('Scanning BTC is started.');
-    sessions[userId].isRunning = true;
+    sessions[userId].isRunningBTC = true;
     fetchBTCWithRSI(userId);
   } else {
     ctx.reply('Scanning BTC is already running.');
@@ -101,8 +104,8 @@ bot.command('stopScanBTC', (ctx) => {
   const userId = ctx.from.id;
   const session = sessions[userId];
 
-  if (session && session.isRunning) {
-    session.isRunning = false;
+  if (session && session.isRunningBTC) {
+    session.isRunningBTC = false;
     ctx.reply('Scanning BTC is stopped.');
   } else {
     ctx.reply('Scanning BTC is not running.');
@@ -131,7 +134,7 @@ async function fetchBTCWithRSI(userId) {
     const btcSymbol = 'BTC/USDT';
     const session = sessions[userId];
 
-    while (session.isRunning) {
+    while (session.isRunningBTC) {
       const ohlcv3m = await exchange.fetchOHLCV(btcSymbol, '3m');
       const closePrices3m = ohlcv3m.map(candle => parseFloat(candle[4]));
       const sma3m = SMA.calculate({ values: closePrices3m, period: 14 });
@@ -143,7 +146,7 @@ async function fetchBTCWithRSI(userId) {
       };
       const rsi3m = RSI.calculate(input3m);
 
-      if (rsi3m[rsi3m.length - 1] > 67 || rsi3m[rsi3m.length - 1] < 33) {
+      if (rsi3m[rsi3m.length - 1] > 65 || rsi3m[rsi3m.length - 1] < 33) {
         const ticker = await exchange.fetchTicker(btcSymbol);
         const price = ticker.last;
         const message = `BTC RSI (3m): ${rsi3m[rsi3m.length - 1]}, Price: ${price}`;
@@ -191,7 +194,7 @@ async function fetchCoinsWithRSI(userId) {
           };
           const rsi5m = RSI.calculate(input5m);
 
-          if (rsi5m[rsi5m.length - 1] > 65 || rsi5m[rsi5m.length - 1] < 30) {
+          if (rsi5m[rsi5m.length - 1] > 65 || rsi5m[rsi5m.length - 1] < 32) {
             const input1m = {
               values: closePrices1m,
               period: 14,
@@ -200,7 +203,7 @@ async function fetchCoinsWithRSI(userId) {
 
             const rsi1m = RSI.calculate(input1m);
 
-            if (rsi1m[rsi1m.length - 1] > 65 || rsi1m[rsi1m.length - 1] < 30) {
+            if (rsi1m[rsi1m.length - 1] > 65 || rsi1m[rsi1m.length - 1] < 32) {
               const message = `Монета: ${symbol}, Last RSI (5m): ${rsi5m[rsi5m.length - 1]}, Last RSI (1m): ${rsi1m[rsi1m.length - 1]}`;
               // console.log(message);
 
