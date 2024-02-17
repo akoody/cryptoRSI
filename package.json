@@ -1,6 +1,7 @@
 {
   "name": "cryptocheck",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -11,6 +12,7 @@
   "dependencies": {
     "axios": "^1.6.7",
     "ccxt": "^4.2.23",
+    "dotenv": "^16.4.4",
     "fs": "^0.0.1-security",
     "p-limit": "^2.3.0",
     "path": "^0.12.7",
