@@ -146,7 +146,7 @@ async function fetchBTCWithRSI(userId) {
       };
       const rsi3m = RSI.calculate(input3m);
 
-      if (rsi3m[rsi3m.length - 1] > 65 || rsi3m[rsi3m.length - 1] < 33) {
+      if (rsi3m[rsi3m.length - 1] > 63 || rsi3m[rsi3m.length - 1] < 35) {
         const ticker = await exchange.fetchTicker(btcSymbol);
         const price = ticker.last;
         const message = `BTC RSI (3m): ${rsi3m[rsi3m.length - 1]}, Price: ${price}`;
